@@ -8,6 +8,7 @@ import io.github.rinhabackend2.springboot.dto.ResponseTransacaoDTO;
 import io.github.rinhabackend2.springboot.entity.ClienteEntity;
 import io.github.rinhabackend2.springboot.entity.TransacaoEntity;
 import io.github.rinhabackend2.springboot.exceptions.ClienteNaoEncontradoException;
+import io.github.rinhabackend2.springboot.exceptions.NovoSaldoInvalidoException;
 import io.github.rinhabackend2.springboot.repository.ClienteRepository;
 import io.github.rinhabackend2.springboot.repository.TransacaoRepository;
 
@@ -34,9 +35,15 @@ public class ClienteService {
 	}
 
 	private long calcularNovoSaldo(ClienteEntity cliente, RequestTransacaoDTO transacao) {
-		return switch (transacao.tipo()) {
+		var novoSaldo = switch (transacao.tipo()) {
 			case CREDITO -> cliente.getSaldo() + transacao.valor();
 			case DEBITO -> cliente.getSaldo() - transacao.valor();
 		};
+
+		if (-novoSaldo > cliente.getLimite()) {
+			throw new NovoSaldoInvalidoException();
+		}
+
+		return novoSaldo;
 	}
 }
