@@ -19,6 +19,8 @@ public class TransacaoEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	@Column(nullable = false)
+	private Integer idCliente;
+	@Column(nullable = false)
 	private Long valor;
 	@Column(nullable = false)
 	private TipoTransacao tipo;
@@ -31,7 +33,8 @@ public class TransacaoEntity {
 	public TransacaoEntity() {
 	}
 
-	public TransacaoEntity(long valor, TipoTransacao tipo, String descricao) {
+	public TransacaoEntity(Integer idCliente, long valor, TipoTransacao tipo, String descricao) {
+		this.idCliente = idCliente;
 		this.valor = valor;
 		this.tipo = tipo;
 		this.descricao = descricao;
