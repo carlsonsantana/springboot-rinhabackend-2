@@ -8,16 +8,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.github.rinhabackend2.springboot.dto.RequestTransacaoDTO;
 import io.github.rinhabackend2.springboot.dto.ResponseTransacaoDTO;
+import io.github.rinhabackend2.springboot.service.ClienteService;
 
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
-	private final long LIMITE = 1;
-	private final long SALDO = 1;
+	private final ClienteService service;
+
+	public ClienteController(ClienteService service) {
+		this.service = service;
+	}
 
 	@PostMapping("/{idCliente}/transacoes")
 	public ResponseTransacaoDTO cadastrarTransacao(@PathVariable int idCliente,
 			@RequestBody RequestTransacaoDTO transacao) {
-		return new ResponseTransacaoDTO(LIMITE, SALDO);
+		return service.cadastrarTransacao(idCliente, transacao);
 	}
 }
