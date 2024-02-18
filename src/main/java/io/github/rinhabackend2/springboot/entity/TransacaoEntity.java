@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
-@Entity
+@Entity(name = "transacao")
 public class TransacaoEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
