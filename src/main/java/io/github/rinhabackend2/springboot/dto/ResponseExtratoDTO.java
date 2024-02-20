@@ -21,8 +21,6 @@ public class ResponseExtratoDTO {
 	public static class SaldoExtratoDTO {
 		private final long total;
 		@JsonProperty("data_extrato")
-		// @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
-		// "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZ")
 		private final OffsetDateTime dataExtrato;
 		private final long limite;
 	}
@@ -34,8 +32,6 @@ public class ResponseExtratoDTO {
 		private final TipoTransacao tipo;
 		private final String descricao;
 		@JsonProperty("realizada_em")
-		// @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
-		// "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZZ")
 		private final OffsetDateTime realizadoEm;
 	}
 }
