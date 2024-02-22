@@ -15,6 +15,10 @@ CREATE TABLE transacao (
   realizado_em TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
+CREATE INDEX transacao_index ON transacao (
+  id_cliente
+);
+
 INSERT INTO cliente (id, limite, saldo) VALUES (1, 100000, 0);
 INSERT INTO cliente (id, limite, saldo) VALUES (2, 80000, 0);
 INSERT INTO cliente (id, limite, saldo) VALUES (3, 1000000, 0);
