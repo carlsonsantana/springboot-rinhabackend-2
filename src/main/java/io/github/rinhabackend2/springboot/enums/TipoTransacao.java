@@ -40,7 +40,7 @@ public enum TipoTransacao {
 
 			return switch (tipo) {
 				case "c" -> TipoTransacao.CREDITO;
-				default -> TipoTransacao.CREDITO;
+				default -> TipoTransacao.DEBITO;
 			};
 		}
 	}
