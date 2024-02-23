@@ -18,7 +18,7 @@ public interface TransacaoRepository extends JpaRepository<TransacaoEntity, Inte
 			RETURNING *
 		)
 		INSERT INTO transacao (id_cliente, valor, tipo, descricao, realizado_em, saldo)
-		SELECT id, :valor, :tipo, :descricao, now(), saldo from updated RETURNING *
+		SELECT id, ABS(:valor), :tipo, :descricao, now(), saldo from updated RETURNING *
 	""", nativeQuery = true)
 	Optional<TransacaoEntity> adicionarTransacao(int idCliente, long valor, char tipo, String descricao);
 
