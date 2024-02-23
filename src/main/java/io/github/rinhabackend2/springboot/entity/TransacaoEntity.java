@@ -31,6 +31,8 @@ public class TransacaoEntity {
 	@CreationTimestamp
 	@Column(name = "realizado_em", nullable = false)
 	private OffsetDateTime realizadoEm;
+	@Column(nullable = false)
+	private Long saldo;
 
 	public TransacaoEntity() {
 	}

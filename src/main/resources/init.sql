@@ -12,7 +12,8 @@ CREATE TABLE transacao (
   valor BIGINT NOT NULL,
   tipo CHAR(1) NOT NULL,
   descricao VARCHAR(10) NOT NULL,
-  realizado_em TIMESTAMP WITH TIME ZONE NOT NULL
+  realizado_em TIMESTAMP WITH TIME ZONE NOT NULL,
+  saldo BIGINT NOT NULL
 );
 
 CREATE INDEX transacao_index ON transacao (

@@ -2,68 +2,68 @@ package io.github.rinhabackend2.springboot.service;
 
 import java.time.OffsetDateTime;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import io.github.rinhabackend2.springboot.dto.RequestTransacaoDTO;
 import io.github.rinhabackend2.springboot.dto.ResponseExtratoDTO;
 import io.github.rinhabackend2.springboot.dto.ResponseTransacaoDTO;
-import io.github.rinhabackend2.springboot.entity.ClienteEntity;
 import io.github.rinhabackend2.springboot.entity.TransacaoEntity;
 import io.github.rinhabackend2.springboot.exceptions.ClienteNaoEncontradoException;
 import io.github.rinhabackend2.springboot.exceptions.NovoSaldoInvalidoException;
-import io.github.rinhabackend2.springboot.repository.ClienteRepository;
 import io.github.rinhabackend2.springboot.repository.TransacaoRepository;
 
 @Service
 public class ClienteService {
-	private final ClienteRepository clienteRepository;
 	private final TransacaoRepository transacaoRepository;
 
-	public ClienteService(ClienteRepository clienteRepository, TransacaoRepository transacaoRepository) {
-		this.clienteRepository = clienteRepository;
+	public ClienteService(TransacaoRepository transacaoRepository) {
 		this.transacaoRepository = transacaoRepository;
 	}
 
-	@Transactional
 	public ResponseTransacaoDTO cadastrarTransacao(int idCliente, RequestTransacaoDTO transacao) {
-		var cliente = clienteRepository.findByIdWithLock(idCliente).orElseThrow(ClienteNaoEncontradoException::new);
+		var limite = getLimite(idCliente);
 
-		cliente.setSaldo(calcularNovoSaldo(cliente, transacao));
+		var cliente = calcularNovoSaldo(idCliente, transacao);
 
-		transacaoRepository
-		.save(new TransacaoEntity(idCliente, transacao.valor(), transacao.tipo(), transacao.descricao()));
-		clienteRepository.save(cliente);
-
-		return new ResponseTransacaoDTO(cliente.getLimite(), cliente.getSaldo());
+		return new ResponseTransacaoDTO(limite, cliente.getSaldo());
 	}
 
-	private long calcularNovoSaldo(ClienteEntity cliente, RequestTransacaoDTO transacao) {
-		var novoSaldo = switch (transacao.tipo()) {
-			case CREDITO -> cliente.getSaldo() + transacao.valor();
-			case DEBITO -> cliente.getSaldo() - transacao.valor();
+	private TransacaoEntity calcularNovoSaldo(int idCliente, RequestTransacaoDTO transacao) {
+		var valor = switch (transacao.tipo()) {
+			case CREDITO -> transacao.valor();
+			case DEBITO -> -transacao.valor();
 		};
 
-		if (-novoSaldo > cliente.getLimite()) {
-			throw new NovoSaldoInvalidoException();
-		}
-
-		return novoSaldo;
+		return transacaoRepository.adicionarTransacao(idCliente, valor, transacao.tipo().tipo(), transacao.descricao())
+				.orElseThrow(NovoSaldoInvalidoException::new);
 	}
 
 	public ResponseExtratoDTO gerarExtrato(int idCliente) {
-		var cliente = clienteRepository.findById(idCliente).orElseThrow(ClienteNaoEncontradoException::new);
-		var ultimasTransacoes = transacaoRepository.findAllByIdCliente(idCliente,
-				PageRequest.of(0, 10, Sort.by("realizadoEm").descending()));
+		var limite = getLimite(idCliente);
 
-		var saldoExtrato = new ResponseExtratoDTO.SaldoExtratoDTO(cliente.getSaldo(), OffsetDateTime.now(), cliente.getLimite());
+		var ultimasTransacoes = transacaoRepository.findAllByIdCliente(idCliente);
+
+		var saldo = 0l;
+		if (!ultimasTransacoes.isEmpty()) {
+			saldo = ultimasTransacoes.get(0).getSaldo();
+		}
+		var saldoExtrato = new ResponseExtratoDTO.SaldoExtratoDTO(saldo, OffsetDateTime.now(), limite);
 		var ultimasTransacoesExtrato = ultimasTransacoes.stream()
 				.map(transacao -> new ResponseExtratoDTO.TransacaoExtratoDTO(transacao.getValor(), transacao.getTipo(),
 						transacao.getDescricao(), transacao.getRealizadoEm()))
 				.toList();
 
 		return new ResponseExtratoDTO(saldoExtrato, ultimasTransacoesExtrato);
+	}
+
+	private int getLimite(int idCliente) {
+		return switch (idCliente) {
+			case 1 -> 100000;
+			case 2 -> 80000;
+			case 3 -> 1000000;
+			case 4 -> 10000000;
+			case 5 -> 500000;
+			default -> throw new ClienteNaoEncontradoException();
+		};
 	}
 }
