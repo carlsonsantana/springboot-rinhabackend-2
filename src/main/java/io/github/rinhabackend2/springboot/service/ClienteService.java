@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import io.github.rinhabackend2.springboot.dto.RequestTransacaoDTO;
 import io.github.rinhabackend2.springboot.dto.ResponseExtratoDTO;
 import io.github.rinhabackend2.springboot.dto.ResponseTransacaoDTO;
-import io.github.rinhabackend2.springboot.entity.TransacaoEntity;
 import io.github.rinhabackend2.springboot.exceptions.ClienteNaoEncontradoException;
-import io.github.rinhabackend2.springboot.exceptions.NovoSaldoInvalidoException;
 import io.github.rinhabackend2.springboot.repository.TransacaoRepository;
 
 @Service
@@ -22,20 +20,18 @@ public class ClienteService {
 
 	public ResponseTransacaoDTO cadastrarTransacao(int idCliente, RequestTransacaoDTO transacao) {
 		var limite = getLimite(idCliente);
+		var saldo = calcularNovoSaldo(idCliente, transacao);
 
-		var cliente = calcularNovoSaldo(idCliente, transacao);
-
-		return new ResponseTransacaoDTO(limite, cliente.getSaldo());
+		return new ResponseTransacaoDTO(limite, saldo);
 	}
 
-	private TransacaoEntity calcularNovoSaldo(int idCliente, RequestTransacaoDTO transacao) {
+	private long calcularNovoSaldo(int idCliente, RequestTransacaoDTO transacao) {
 		var valor = switch (transacao.tipo()) {
 			case CREDITO -> transacao.valor();
 			case DEBITO -> -transacao.valor();
 		};
 
-		return transacaoRepository.adicionarTransacao(idCliente, valor, transacao.tipo().tipo(), transacao.descricao())
-				.orElseThrow(NovoSaldoInvalidoException::new);
+		return transacaoRepository.adicionarTransacao(idCliente, valor, transacao.tipo().tipo(), transacao.descricao());
 	}
 
 	public ResponseExtratoDTO gerarExtrato(int idCliente) {
