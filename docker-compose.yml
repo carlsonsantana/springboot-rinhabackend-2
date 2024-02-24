@@ -43,7 +43,7 @@ services:
       resources:
         limits:
           cpus: "0.15"
-          memory: "10MB"
+          memory: "15MB"
 
   db:
     image: postgres:latest
@@ -61,7 +61,7 @@ services:
       resources:
         limits:
           cpus: "0.25"
-          memory: "140MB"
+          memory: "135MB"
 
 networks:
   default:
