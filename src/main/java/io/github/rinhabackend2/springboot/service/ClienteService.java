@@ -41,12 +41,12 @@ public class ClienteService {
 
 		var saldo = 0l;
 		if (!ultimasTransacoes.isEmpty()) {
-			saldo = ultimasTransacoes.get(0).getSaldo();
+			saldo = ultimasTransacoes.get(0).saldo();
 		}
 		var saldoExtrato = new ResponseExtratoDTO.SaldoExtratoDTO(saldo, OffsetDateTime.now(), limite);
 		var ultimasTransacoesExtrato = ultimasTransacoes.stream()
-				.map(transacao -> new ResponseExtratoDTO.TransacaoExtratoDTO(transacao.getValor(), transacao.getTipo(),
-						transacao.getDescricao(), transacao.getRealizadoEm()))
+				.map(transacao -> new ResponseExtratoDTO.TransacaoExtratoDTO(transacao.valor(), transacao.tipo(),
+						transacao.descricao(), transacao.realizadoEm()))
 				.toList();
 
 		return new ResponseExtratoDTO(saldoExtrato, ultimasTransacoesExtrato);

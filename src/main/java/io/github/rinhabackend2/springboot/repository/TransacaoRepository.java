@@ -45,14 +45,10 @@ public class TransacaoRepository {
 	private static class TransacaoRowMapper implements RowMapper<TransacaoEntity> {
 		@Override
 		public TransacaoEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-			var transacao = new TransacaoEntity();
-			transacao.setIdCliente(rs.getInt(1));
-			transacao.setValor(rs.getLong(2));
-			transacao.setTipo(rs.getString(3).equals("c") ? TipoTransacao.CREDITO : TipoTransacao.DEBITO);
-			transacao.setDescricao(rs.getString(4));
-			transacao.setRealizadoEm(rs.getObject(5, OffsetDateTime.class));
-			transacao.setSaldo(rs.getLong(6));
-			return transacao;
+			var tipoTransacao = rs.getString(3).equals("c") ? TipoTransacao.CREDITO : TipoTransacao.DEBITO;
+
+			return new TransacaoEntity(rs.getInt(1), rs.getLong(2), tipoTransacao, rs.getString(4),
+					rs.getObject(5, OffsetDateTime.class), rs.getLong(6));
 		}
 	}
 
