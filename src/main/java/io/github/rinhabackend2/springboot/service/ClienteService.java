@@ -27,11 +27,11 @@ public class ClienteService {
 
 	private long calcularNovoSaldo(int idCliente, RequestTransacaoDTO transacao) {
 		var valor = switch (transacao.tipo()) {
-			case CREDITO -> transacao.valor();
-			case DEBITO -> -transacao.valor();
+			case "c" -> transacao.valor();
+			default -> -transacao.valor();
 		};
 
-		return transacaoRepository.adicionarTransacao(idCliente, valor, transacao.tipo().tipo(), transacao.descricao());
+		return transacaoRepository.adicionarTransacao(idCliente, valor, transacao.tipo(), transacao.descricao());
 	}
 
 	public ResponseExtratoDTO gerarExtrato(int idCliente) {

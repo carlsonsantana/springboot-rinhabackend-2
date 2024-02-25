@@ -52,7 +52,7 @@ public class TransacaoRepository {
 		}
 	}
 
-	public long adicionarTransacao(int idCliente, long valor, char tipo, String descricao) {
+	public long adicionarTransacao(int idCliente, long valor, String tipo, String descricao) {
 		try {
 			return jdbcTemplate.queryForObject(QUERY_ADICIONAR_TRANSACAO, Long.class, valor, idCliente, valor, valor,
 					tipo, descricao).longValue();
