@@ -27,10 +27,11 @@ public class TransacaoRepository {
 				SELECT id, ABS(?), ?, ?, now(), saldo from updated RETURNING saldo
 			""";
 	private static final String QUERY_EXTRATO = """
-				SELECT id_cliente, valor, tipo, descricao, realizado_em, saldo FROM transacao
+				SELECT id_cliente, valor, tipo, descricao, realizado_em, cliente.saldo FROM transacao
+				INNER JOIN cliente ON (cliente.id = transacao.id_cliente)
 				WHERE
 					id_cliente = ?
-				ORDER BY id DESC LIMIT 10
+				ORDER BY transacao.id DESC LIMIT 10
 			""";
 	private final JdbcTemplate jdbcTemplate;
 	private final TransacaoRowMapper transacaoRowMapper;
