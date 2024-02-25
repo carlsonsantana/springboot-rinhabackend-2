@@ -8,3 +8,11 @@ spring:
     driverClassName: org.postgresql.Driver
     hikari:
       maximum-pool-size: 15
+  jmx:
+    enabled: false
+  aop:
+    auto: false
+    proxy-target-class: false
+  application:
+    admin:
+       enabled: false
