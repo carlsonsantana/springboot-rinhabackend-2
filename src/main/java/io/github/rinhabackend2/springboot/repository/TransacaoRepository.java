@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import io.github.rinhabackend2.springboot.entity.TransacaoEntity;
-import io.github.rinhabackend2.springboot.enums.TipoTransacao;
 import io.github.rinhabackend2.springboot.exceptions.NovoSaldoInvalidoException;
 
 @Component
@@ -31,7 +30,7 @@ public class TransacaoRepository {
 				SELECT id_cliente, valor, tipo, descricao, realizado_em, saldo FROM transacao
 				WHERE
 					id_cliente = ?
-				ORDER BY transacao.id DESC LIMIT 10
+				ORDER BY id DESC LIMIT 10
 			""";
 	private final JdbcTemplate jdbcTemplate;
 	private final TransacaoRowMapper transacaoRowMapper;
@@ -45,9 +44,7 @@ public class TransacaoRepository {
 	private static class TransacaoRowMapper implements RowMapper<TransacaoEntity> {
 		@Override
 		public TransacaoEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-			var tipoTransacao = rs.getString(3).equals("c") ? TipoTransacao.CREDITO : TipoTransacao.DEBITO;
-
-			return new TransacaoEntity(rs.getInt(1), rs.getLong(2), tipoTransacao, rs.getString(4),
+			return new TransacaoEntity(rs.getInt(1), rs.getLong(2), rs.getString(3), rs.getString(4),
 					rs.getObject(5, OffsetDateTime.class), rs.getLong(6));
 		}
 	}

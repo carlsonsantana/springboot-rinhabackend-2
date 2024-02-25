@@ -1,5 +1,3 @@
-CREATE SEQUENCE transacao_seq START 1;
-
 CREATE TABLE cliente (
   id INT PRIMARY KEY,
   limite BIGINT NOT NULL,
@@ -7,7 +5,7 @@ CREATE TABLE cliente (
 );
 
 CREATE TABLE transacao (
-  id INT PRIMARY KEY DEFAULT nextval('transacao_seq'::regclass),
+  id SERIAL PRIMARY KEY,
   id_cliente INT NOT NULL,
   valor BIGINT NOT NULL,
   tipo CHAR(1) NOT NULL,
